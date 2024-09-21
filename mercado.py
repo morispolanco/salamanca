@@ -1,10 +1,9 @@
 import streamlit as st
+import re
 
 # Función para cargar el texto de la obra desde una cadena
 @st.cache_data
 def cargar_obra():
-    # Este es un ejemplo de cómo podrías almacenar el texto. 
-    # Puedes reemplazar este contenido con el texto completo de la obra.
     texto_obra = """
     
 
@@ -358,21 +357,23 @@ Fo. 2. pa. 2. en la margen, lege replete pro repleate. fo. 4. pa. 2. l. antep. l
     """
     return texto_obra
 
-# Función para buscar citas relevantes en la obra
+# Función para buscar citas relevantes en la obra usando coincidencias parciales
 def buscar_citas(texto_obra, pregunta):
     # Convertir todo el texto a minúsculas para facilitar la búsqueda
     texto_obra = texto_obra.lower()
     pregunta = pregunta.lower()
     
-    # Dividir el texto en párrafos o secciones para buscar citas
+    # Dividir el texto en párrafos para buscar citas
     parrafos = texto_obra.split('\n')
-    
-    # Buscar coincidencias en los párrafos
+
+    # Utilizar una expresión regular para buscar coincidencias parciales en los párrafos
+    patrones = r'\b' + r'\b|\b'.join(pregunta.split()) + r'\b'
     resultados = []
+
     for parrafo in parrafos:
-        if pregunta in parrafo:
+        if re.search(patrones, parrafo):
             resultados.append(parrafo)
-    
+
     # Si no hay coincidencias, devolver un mensaje genérico
     if len(resultados) == 0:
         return "No se encontraron citas relevantes para tu consulta."
